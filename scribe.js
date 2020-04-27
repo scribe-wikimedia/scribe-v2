@@ -100,7 +100,7 @@
         for (var i = 0; i < slides.length; i++) {
             if (i === index) {
                 slides[i].style.display = "block";
-                $('.mw-scribe-ref-box').addClass('activeref');
+                $('.ve-scribe-ref-box').addClass('activeref');
             } else {
                 slides[i].style.display = "none";
             }
@@ -146,12 +146,12 @@
         var i;
         for (i = 0; i < slides.length; i++) {
             slides[i].style.display = "none";
-            $('.mw-scribe-ref-box').removeClass('activeref');
+            $('.ve-scribe-ref-box').removeClass('activeref');
         }
     }
 
     function createReferenceSlider(surface) {
-        var slider = createElement('div', 'mw-scribe-slider', 'slideshow-container', ''),
+        var slider = createElement('div', 've-scribe-slider', 'slideshow-container', ''),
             previousArrow = createElement('a', '', 'prev', '&#10094;'),
             nextArrow = createElement('a', '', 'next', '&#10095;');
         // slideContent = buildSlideContent();
@@ -163,7 +163,7 @@
         surface.append(slider['0']);
 
         $('#editing-ideas-tip').hide();
-        $('#mw-scribe-slider').hide();
+        $('#ve-scribe-slider').hide();
     }
 
     /**
@@ -238,7 +238,7 @@
             var selectRefData = [], selectedUrl,
                 surfaceModel = ve.init.target.getSurface().getModel();
 
-            $('.reference-slider-slides')['0'].childNodes.forEach(function (node) {
+            $('.ve-scribe-reference-slider-slides')['0'].childNodes.forEach(function (node) {
                 if (node.style.display === 'block') {
                     selectedUrl = node.firstChild.childNodes['2'].innerHTML;
                 }
@@ -260,19 +260,19 @@
 
     function activateCloseSliderOnclickListener(cancelSlider) {
         cancelSlider.on( 'click', function () {
-            $('#mw-scribe-slider').hide();
+            $('#ve-scribe-slider').hide();
         });
     }
 
     function buildSlideContent(sectionName) {
         sectionName = $('#editing-ideas-tip')['0'].childNodes['1'].id;
-        var slideContent = createElement('div', '', 'reference-slider-slides', '', ''),
-            cancelSlider = createElement('a', 'cancel-ref-suggest', 'oo-ui-iconElement-icon oo-ui-icon-close', ''),
-            addRefLinnk = createElement('a', 'mw-scribe-choose-ref', '', 'ADD');
+        var slideContent = createElement('div', '', 've-scribe-reference-slider-slides', '', ''),
+            cancelSlider = createElement('a', 've-scribe-cancel-ref-suggest', 'oo-ui-iconElement-icon oo-ui-icon-close', ''),
+            addRefLinnk = createElement('a', 've-scribe-choose-ref', '', 'ADD');
 
         // remove previous slider if there was
-        if ( $('#mw-scribe-slider') ) {
-            $('#mw-scribe-slider').remove();
+        if ( $('#ve-scribe-slider') ) {
+            $('#ve-scribe-slider').remove();
             createReferenceSlider($('.ve-ce-documentNode')['0']);
         }
 
@@ -283,12 +283,12 @@
                 resource.forEach(function (item) {
                     // append the data to the slider display items
 
-                    var sliderText = createElement('div', '', 'slider-text', ''),
-                        refBox = createElement('div', '', 'mw-scribe-ref-box', ''),
-                        refTitle = createElement('span', '', 'mw-scribe-ref-title', item.publication_title),
-                        refText = createElement('p', '', 'mw-scribe-ref-text', item.content),
-                        refUrl = createElement('a', '', 'mw-scribe-ref-link', item.url),
-                        refData = createElement('p', 'mw-scribe-ref-data', '', '');
+                    var sliderText = createElement('div', '', 've-scribe-slider-text', ''),
+                        refBox = createElement('div', '', 've-scribe-ref-box', ''),
+                        refTitle = createElement('span', '', 've-scribe-ref-title', item.publication_title),
+                        refText = createElement('p', '', 've-scribe-ref-text', item.content),
+                        refUrl = createElement('a', '', 've-scribe-ref-link', item.url),
+                        refData = createElement('p', 've-scribe-ref-data', '', '');
 
                     addChild(slideContent['0'], sliderText['0']);
                     addChild(sliderText['0'], refBox['0']);
@@ -297,13 +297,13 @@
                     addChild(refBox['0'], refUrl['0']);
                     addChild(refBox['0'], refData['0']);
 
-                    $('#mw-scribe-slider')['0'].append(slideContent['0']);
+                    $('#ve-scribe-slider')['0'].append(slideContent['0']);
                     sliderText.hide(); // remove this line
 
                     // fill the ref-data node with the data from server for reference 
                     $.get('https://tools.wmflabs.org/scribe/api/v1/references/resources?link=' + item.url).done(
                         function (data) {
-                            $("#mw-scribe-ref-data").text(
+                            $("#ve-scribe-ref-data").text(
                                 data.publication_date + '_' +
                                 data.publication_title + '_' +
                                 data.publisher_name + '_' +
@@ -312,10 +312,10 @@
                     );
                     refData.hide();
                 });
-                addChild($('#mw-scribe-slider')['0'], addRefLinnk['0']);
-                addChild($('#mw-scribe-slider')['0'], cancelSlider['0']);
+                addChild($('#ve-scribe-slider')['0'], addRefLinnk['0']);
+                addChild($('#ve-scribe-slider')['0'], cancelSlider['0']);
 
-                var slides = $('#mw-scribe-slider')['0'].childNodes['2'].childNodes;
+                var slides = $('#ve-scribe-slider')['0'].childNodes['2'].childNodes;
                 loadAllReferenceSlides(slides);
 
                 // display the first reference data in the slides
@@ -327,10 +327,10 @@
                 slideIndex = 0;
 
                 // activate ADD on click Listener
-                activateAddReferenceOnclickListerner($('#mw-scribe-view-ref'),
-                    $('#mw-scribe-ref-data')
+                activateAddReferenceOnclickListerner($('#ve-scribe-choose-ref'),
+                    $('#ve-scribe-ref-data')
                 );
-                activateCloseSliderOnclickListener( $('#cancel-ref-suggest') );
+                activateCloseSliderOnclickListener( $('#ve-scribe-cancel-ref-suggest') );
             });
     }
 
@@ -341,21 +341,21 @@
 
             // populate the reference slider with data from server
             buildSlideContent($('#editing-ideas-tip')['0'])
-            // $( '#mw-scribe-slider' )['0'].prepend(  buildSlideContent( sectionName )['0'] );
-            $('#mw-scribe-slider').show();
+            // $( '#ve-scribe-slider' )['0'].prepend(  buildSlideContent( sectionName )['0'] );
+            $('#ve-scribe-slider').show();
         });
     }
 
     function ShowEditIdeaTip(surface) {
         var tipSpan = createElement('span', 'editing-ideas-tip', '', ''),
         	tipIcon = createElement('span', '', '', ''),
-            tipText = createElement('a', '', 'sm-suggest-text', mw.msg( 've-scribe-editing-ideas-txt' ) );
+            tipText = createElement('a', '', 've-scribe-sm-suggest-text', mw.msg( 've-scribe-editing-ideas-txt' ) );
         addChild(tipSpan['0'], tipIcon['0']);
         addChild(tipSpan['0'], tipText['0']);
         surface.append(tipSpan['0']);
 
         addEditTipOnclickListener($('#editing-ideas-tip'), surface);
-        $('#new-section-tip').hide();
+        $('#ve-scribe-new-section-tip').hide();
 
         createReferenceSlider(surface);
     }
@@ -374,7 +374,7 @@
                     writeSectionToSurface(sectionTextData);
                     $('#editing-ideas-tip').show();
                     // hide reference panel
-                    $('#mw-scribe-slider').hide();
+                    $('#ve-scribe-slider').hide();
                     $('#editing-ideas-tip')['0'].childNodes['1'].id = $('#' + seectionId)['0'].firstChild.data;
                 });
             });
@@ -382,11 +382,11 @@
     }
 
     function buildScribeHeader(mobileHeader, surface) {
-        var header = createElement('div', 'sm-header', 'header', ''),
-            tagContainer = createElement('span', 'sm-idea-label', '', ''),
-            sectionHeaderIcon = createElement('span', 'header-tip-icon', 'oo-ui-iconElement-icon oo-ui-icon-bell', ''),
-            sectionHeaderText = createElement('span', '', 'sm-suggest-text', mw.msg('ve-scribe-suggested-sestion-txt')),
-            sectionTagList = createElement('ul', 'section-container', 'tags', '');
+        var header = createElement('div', 've-scribe-sm-header', 'header', ''),
+            tagContainer = createElement('span', 've-scribe-sm-idea-label', '', ''),
+            sectionHeaderIcon = createElement('span', 've-scribe-header-tip-icon', 'oo-ui-iconElement-icon oo-ui-icon-bell', ''),
+            sectionHeaderText = createElement('span', '', 've-scribe-sm-suggest-text', mw.msg('ve-scribe-suggested-sestion-txt')),
+            sectionTagList = createElement('ul', 've-scribe-section-container', 'tags', '');
 
         // Each section should appear as a tagListItem
         $.get('https://tools.wmflabs.org/scribe/api/v1/sections?article=' + mw.config.get('wgTitle'))
@@ -438,13 +438,13 @@
     }
 
     function showNewSectionTip(surface) {
-        var tipSpan = createElement('span', 'new-section-tip', 'editing-tip', ''),
-            tipText = createElement('a', 'editing-idea-link', 'sm-suggest-text',
+        var tipSpan = createElement('span', 've-scribe-new-section-tip', 'editing-tip', ''),
+            tipText = createElement('a', 'editing-idea-link', 've-scribe-sm-suggest-text',
             						mw.msg('ve-scribe-new-section-txt'));
         addChild(tipSpan['0'], tipText['0']);
 
         surface.append(tipSpan['0']);
-        addNewSectionTipOnclickListener( $('#new-section-tip'), surface, mobileHeader);
+        addNewSectionTipOnclickListener( $('#ve-scribe-new-section-tip'), surface, mobileHeader);
     }
 
     mw.hook('ve.activationComplete').add(function () {
