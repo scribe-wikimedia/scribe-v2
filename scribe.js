@@ -386,7 +386,7 @@
             tagContainer = createElement('span', 've-scribe-sm-idea-label', '', ''),
             sectionHeaderIcon = createElement('span', 've-scribe-header-tip-icon', 'oo-ui-iconElement-icon oo-ui-icon-bell', ''),
             sectionHeaderText = createElement('span', '', 've-scribe-sm-suggest-text', mw.msg('ve-scribe-suggested-sestion-txt')),
-            sectionTagList = createElement('ul', 've-scribe-section-container', 'tags', '');
+            sectionTagList = createElement('ul', 've-scribe-section-container', 'tags-container', '');
 
         // Each section should appear as a tagListItem
         $.get('https://tools.wmflabs.org/scribe/api/v1/sections?article=' + mw.config.get('wgTitle'))
@@ -394,8 +394,7 @@
                 var articleSections = data.parse.sections;
                 articleSections.forEach(function (section) {
                     var sectionTagListItem = createElement('li',
-                        '',
-                        'tags',
+                        '', 'tags',
                         '<a class="tag" id="section-' + section.number + '">' +
                         section.line + '</a>');
                     // add the sections in to the container
