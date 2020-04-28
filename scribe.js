@@ -278,7 +278,7 @@
 
         // $.get('https://tools.wmflabs.org/scribe/api/v1/references?section=' + mw.config.get( 'wgTitle' ).toLowerCase())
         $.get('https://tools.wmflabs.org/scribe/api/v1/references?section=' + sectionName + '&article=' + mw.config.get('wgTitle'))
-            .done(function (response) {
+            .then(function (response) {
                 var resource = response.resources;
                 resource.forEach(function (item) {
                     // append the data to the slider display items
@@ -331,7 +331,14 @@
                     $('#ve-scribe-ref-data')
                 );
                 activateCloseSliderOnclickListener( $('#ve-scribe-cancel-ref-suggest') );
-            });
+            },
+            // error routine
+	        function( error){
+	           // hide the slider since there is no ref data
+	           $('#ve-scribe-slider').hide()
+	           OO.ui.alert(mw.msg('ve-scribe-server-error')).done(function () {
+	        });	
+        });
     }
 
     function addEditTipOnclickListener(sectionIdeasTip, surface) {
