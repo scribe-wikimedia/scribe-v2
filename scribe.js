@@ -247,8 +247,7 @@
 
             // we build template for select link to cite on VE Surface
             templateData = builRefTemplate(selectRefData, selectedUrl);
-
-            insertReference(surfaceModel, selectRefData);
+            insertReference(surfaceModel, templateData);
             insertContent(surfaceModel, ' ');
 
             // we send stats to the server side
@@ -350,6 +349,7 @@
             buildSlideContent($('#editing-ideas-tip')['0'])
             // $( '#ve-scribe-slider' )['0'].prepend(  buildSlideContent( sectionName )['0'] );
             $('#ve-scribe-slider').show();
+            $('#ve-scribe-show-header-icon').hide()
         });
     }
 
@@ -387,11 +387,27 @@
             });
         }
     }
+    
+    function addShowScribeHeaderMenuOnclickListener( expandScribeHeaderMenu ){
+    	expandScribeHeaderMenu.on( 'click', function(){
+    		$('#ve-scribe-show-header-icon').hide()
+    		$('#ve-scribe-sm-header').slideDown();
+    	} );
+    }
+
+	function addHideScribeHeaderMenuOnclickListener( collapseScribeHeaderIcon, mobileHeader ){
+		collapseScribeHeaderIcon.on( 'click', function(){
+			$('#ve-scribe-sm-header').slideUp();
+			$('#ve-scribe-show-header-icon').show()
+		} );
+	}
 
     function buildScribeHeader(mobileHeader, surface) {
         var header = createElement('div', 've-scribe-sm-header', 'header', ''),
             tagContainer = createElement('span', 've-scribe-sm-idea-label', '', ''),
             sectionHeaderIcon = createElement('span', 've-scribe-header-tip-icon', 'oo-ui-iconElement-icon oo-ui-icon-bell', ''),
+            collapseScribeHeaderIcon = createElement('span', 've-scribe-hide-header-icon', 'oo-ui-iconElement-icon oo-ui-icon-collapse', ''),
+            expandScribeHeaderIcon = createElement('span', 've-scribe-show-header-icon', 'oo-ui-iconElement-icon oo-ui-icon-expand', ''),
             sectionHeaderText = createElement('span', '', 've-scribe-sm-suggest-text', mw.msg('ve-scribe-suggested-sestion-txt')),
             sectionTagList = createElement('ul', 've-scribe-section-container', 'tags-container', '');
 
@@ -411,13 +427,18 @@
                 // If the request does not complete we don't add anything to interface
                 addChild(tagContainer['0'], sectionHeaderIcon['0']);
                 addChild(tagContainer['0'], sectionHeaderText['0']);
+                addChild(tagContainer['0'], collapseScribeHeaderIcon['0']);
                 addChild(header['0'], tagContainer['0']);
 
                 addChild(header['0'], sectionTagList['0']);
+                mobileHeader.append(expandScribeHeaderIcon['0']);
                 mobileHeader.append(header['0']);
 
                 // set every section's onclick listener using the container
-                addSectionItemOnclickListener(sectionTagList, surface);
+                addSectionItemOnclickListener( sectionTagList, surface);
+                addHideScribeHeaderMenuOnclickListener( collapseScribeHeaderIcon, mobileHeader );
+                addShowScribeHeaderMenuOnclickListener( expandScribeHeaderIcon, mobileHeader );
+                expandScribeHeaderIcon.hide();
             },	
             	// error routine
 	            function( error){

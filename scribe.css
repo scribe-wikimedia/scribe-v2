@@ -208,3 +208,19 @@ a.ve-scribe-sm-suggest-text:hover {
 	margin-left: -18px;
 }
 
+#ve-scribe-hide-header-icon{
+	position: inherit;
+	cursor: pointer;
+	float: right;
+}
+
+#ve-scribe-hide-header-icon:hover {
+	background-color: white;
+}
+
+#ve-scribe-show-header-icon {
+	position: inherit;
+	float: right;
+	cursor: pointer;
+}
+
