@@ -187,12 +187,12 @@ a.tag:visited {
 }
 
 #editing-ideas-tip{
-	float: right;
-	padding-top: 1px;
-	margin-top: -4px;
-	padding-bottom: 1px;
-	border-radius: 6px;
-	background-color: #c8ccd1;
+    float: left;
+    padding-top: 1px;
+    margin-top: -4.5px;
+    padding-bottom: 1px;
+    border-radius: 6px;
+    background-color: #c8ccd1;
 }
 
 a.ve-scribe-sm-suggest-text:hover {
@@ -212,6 +212,7 @@ a.ve-scribe-sm-suggest-text:hover {
 	position: inherit;
 	cursor: pointer;
 	float: right;
+	margin-right: 20px;
 }
 
 #ve-scribe-hide-header-icon:hover {
@@ -222,5 +223,6 @@ a.ve-scribe-sm-suggest-text:hover {
 	position: inherit;
 	float: right;
 	cursor: pointer;
+	margin-right: 20px;
 }
 
