@@ -104,6 +104,10 @@
 	z-index: 1;
 }
 
+.prev:hover, .next:hover {
+    text-decoration: none;
+}
+
 /* Position the "next button" to the right */
 .next {
 	right: 0;

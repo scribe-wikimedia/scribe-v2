@@ -263,7 +263,6 @@
             templateData = builRefTemplate(selectRefData, selectedUrl);
             insertReference(surfaceModel, templateData);
             insertContent(surfaceModel, ' ');
-            console.log(slideIndex)
             slides = $('.ve-scribe-reference-slider-slides')['0'].childNodes
             slides.forEach( function( slide ) {
             	if( slide.style.display === 'block'){
