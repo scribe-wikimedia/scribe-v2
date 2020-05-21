@@ -13,7 +13,6 @@
             've-scribe-launch-scribe-deny': 'No'
         });
     }
-
     var scribe = {}, slideIndex = 0, chosenReferences = [], sectionUrlTemplateData = [];
 
     function createElement(type, id, className, displayText) {
@@ -72,8 +71,12 @@
 
     function insertContent(surfaceModel, data) {
         // Insert data and place cursor afterwards
-        surfaceModel.getFragment().collapseToEnd().insertContent(data).collapseToEnd();
+        surfaceModel.getFragment().collapseToEnd().insertContent(data).collapseToEnd().select();
     }
+
+	function buildEmptyParagraph(){
+		return [ { type: 'paragraph' }, { type: '/paragraph' } ]
+	}
 
     /**
      * Add write section to VE surface.
@@ -88,6 +91,9 @@
         });
         ReferenceSectionData.push({ type: '/mwHeading' });
         insertContent(surfaceModel, ReferenceSectionData);
+        
+        // add a new paragraph to create space
+        insertContent(surfaceModel, buildEmptyParagraph());
     }
 
     /**d
@@ -96,14 +102,21 @@
      * @param {Object} slides - the slides in the reference section
      */
 
-    function showSlide(index, slides) {
+    function showSlide(slideIndex, slides) {
         for (var i = 0; i < slides.length; i++) {
-            if (i === index) {
-                slides[i].style.display = "block";
+            if (i === slideIndex) {
+                slides[ i ].style.display = "block";
+                
                 $('.ve-scribe-ref-box').addClass('activeref');
             } else {
                 slides[i].style.display = "none";
+                $('.ve-scribe-ref-box').removeClass('activeref');
             }
+        }
+		if( slides[ slideIndex ].classList.contains('used-ref')){
+        	$('#ve-scribe-choose-ref')['0'].innerHTML = 'ADD AGAIN'
+        }else{
+			$('#ve-scribe-choose-ref')['0'].innerHTML = 'ADD'
         }
     }
 
@@ -119,6 +132,7 @@
             }
             slideIndex++;
             showSlide(slideIndex, slides);
+            
         });
     }
 
@@ -232,8 +246,8 @@
 
         return template;
     }
-
-    function activateAddReferenceOnclickListerner(referenceAddButton, refDataNode) {
+	
+    function activateAddReferenceOnclickListerner(referenceAddButton, refDataNode, slides) {
         referenceAddButton.on('click', function () {
             var selectRefData = [], selectedUrl,
                 surfaceModel = ve.init.target.getSurface().getModel();
@@ -249,7 +263,13 @@
             templateData = builRefTemplate(selectRefData, selectedUrl);
             insertReference(surfaceModel, templateData);
             insertContent(surfaceModel, ' ');
-
+            console.log(slideIndex)
+            slides = $('.ve-scribe-reference-slider-slides')['0'].childNodes
+            slides.forEach( function( slide ) {
+            	if( slide.style.display === 'block'){
+            		slide.className = slide.className + ' used-ref'
+            	}	
+            } );
             // we send stats to the server side
             // references_used and sections_used
             // HINT -  references_used == selectedUrl
@@ -327,7 +347,7 @@
 
                 // activate ADD on click Listener
                 activateAddReferenceOnclickListerner($('#ve-scribe-choose-ref'),
-                    $('#ve-scribe-ref-data')
+                    $('#ve-scribe-ref-data', slides)
                 );
                 activateCloseSliderOnclickListener( $('#ve-scribe-cancel-ref-suggest') );
             },
@@ -379,6 +399,7 @@
                     // we have to write the section title into the ve surface here
                     var sectionTextData = $('#' + seectionId)['0'].firstChild.data.split('');
                     writeSectionToSurface(sectionTextData);
+                    
                     $('#editing-ideas-tip').show();
                     // hide reference panel
                     $('#ve-scribe-slider').hide();
@@ -406,14 +427,18 @@
         var header = createElement('div', 've-scribe-sm-header', 'header', ''),
             tagContainer = createElement('span', 've-scribe-sm-idea-label', '', ''),
             sectionHeaderIcon = createElement('span', 've-scribe-header-tip-icon', 'oo-ui-iconElement-icon oo-ui-icon-bell', ''),
-            collapseScribeHeaderIcon = createElement('span', 've-scribe-hide-header-icon', 'oo-ui-iconElement-icon oo-ui-icon-collapse', ''),
-            expandScribeHeaderIcon = createElement('span', 've-scribe-show-header-icon', 'oo-ui-iconElement-icon oo-ui-icon-expand', ''),
+            collapseScribeHeaderIcon = createElement('span', 've-scribe-hide-header-icon', 'oo-ui-indicatorElement-indicator oo-ui-indicator-up', ''),
+            expandScribeHeaderIcon = createElement('span', 've-scribe-show-header-icon', 'oo-ui-indicatorElement-indicator oo-ui-indicator-down', '<p>Scribe</p>'),
             sectionHeaderText = createElement('span', '', 've-scribe-sm-suggest-text', mw.msg('ve-scribe-suggested-sestion-txt')),
             sectionTagList = createElement('ul', 've-scribe-section-container', 'tags-container', '');
-
+	    
         // Each section should appear as a tagListItem
         $.get('https://tools.wmflabs.org/scribe/api/v1/sections?article=' + mw.config.get('wgTitle'))
             .then(function (data) {
+        		
+        		// hide the loader: when data is fetched
+            	$('#scribe-pg-bar').hide()
+
                 var articleSections = data.parse.sections;
                 articleSections.forEach(function (section) {
                     var sectionTagListItem = createElement('li',
@@ -429,24 +454,36 @@
                 addChild(tagContainer['0'], sectionHeaderText['0']);
                 addChild(tagContainer['0'], collapseScribeHeaderIcon['0']);
                 addChild(header['0'], tagContainer['0']);
-
                 addChild(header['0'], sectionTagList['0']);
+
                 mobileHeader.append(expandScribeHeaderIcon['0']);
                 mobileHeader.append(header['0']);
-
+				
                 // set every section's onclick listener using the container
                 addSectionItemOnclickListener( sectionTagList, surface);
                 addHideScribeHeaderMenuOnclickListener( collapseScribeHeaderIcon, mobileHeader );
                 addShowScribeHeaderMenuOnclickListener( expandScribeHeaderIcon, mobileHeader );
                 expandScribeHeaderIcon.hide();
             },	
-            	// error routine
-	            function( error){
-	                OO.ui.alert(mw.msg('ve-scribe-server-error')).done(function () {
-	            });	
-            } );
+            
+            // error routine
+			// give feedback to user
+	        function( error){
+	        	// hide the loader: Nothing happened
+            	$('#scribe-pg-bar').hide()
+            	// display error message to client
+	        	OO.ui.alert(mw.msg('ve-scribe-server-error')).done(function () {
+	        	});
+        		
+	        } );
     }
 
+	function buildScribeLoader(){
+		return new OO.ui.ProgressBarWidget( {
+			progress: false,
+			id: 'scribe-pg-bar'
+		} )
+	}
 
     function addNewSectionTipOnclickListener(sectionIdeasTip, surface, mobileHeader) {
         sectionIdeasTip.on('click', function () {
@@ -455,7 +492,9 @@
 
             //display header with sections
             buildScribeHeader(mobileHeader, surface);
-
+			
+			$('#scribe-pg-bar').show()
+			
             // display the edit tips tag
             ShowEditIdeaTip( surface );
 
@@ -470,8 +509,11 @@
             						mw.msg('ve-scribe-new-section-txt'));
         addChild(tipSpan['0'], tipText['0']);
 
-        surface.append(tipSpan['0']);
-        addNewSectionTipOnclickListener( $('#ve-scribe-new-section-tip'), surface, mobileHeader);
+		var scribeLoader = buildScribeLoader();
+		surface.prepend( scribeLoader.$element )
+	    
+        surface[ '0' ].append(tipSpan['0']);
+        addNewSectionTipOnclickListener( $('#ve-scribe-new-section-tip'), surface[ '0' ], mobileHeader);
     }
 
     mw.hook('ve.activationComplete').add(function () {
@@ -489,9 +531,12 @@
             }
         ).done(function (confirmed) {
             if (confirmed ) {
-                var surface = $('.ve-init-mw-desktopArticleTarget-originalContent')['0'];
+                var surface = $('.ve-init-mw-desktopArticleTarget-originalContent');
                 mobileHeader = $('.oo-ui-toolbar-bar')['0'];
                 showNewSectionTip(surface, mobileHeader);
+                
+                // hide the loader inititally
+                $('#scribe-pg-bar').hide()
             }
         });
     });

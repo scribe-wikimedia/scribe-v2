@@ -221,8 +221,17 @@ a.ve-scribe-sm-suggest-text:hover {
 
 #ve-scribe-show-header-icon {
 	position: inherit;
+    float: right;
+    cursor: pointer;
+    margin-right: 20px;
+    font-size: smaller;
+}
+
+
+#ve-scribe-show-header-icon > p {
 	float: right;
-	cursor: pointer;
-	margin-right: 20px;
+    position: inherit;
+    font-weight: bold;
+    margin-right: 13px;
 }
 
