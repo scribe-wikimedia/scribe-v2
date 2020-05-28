@@ -13,7 +13,7 @@
             've-scribe-launch-scribe-deny': 'No'
         });
     }
-    var scribe = {}, slideIndex = 0, chosenReferences = [], sectionUrlTemplateData = [];
+    var scribe = {}, slideIndex = 0, chosenReferences = [], sectionUrlTemplateData = [], selectedSection = '';
 
     function createElement(type, id, className, displayText) {
         var element;
@@ -94,9 +94,10 @@
         
         // add a new paragraph to create space
         insertContent(surfaceModel, buildEmptyParagraph());
+        selectedSection = sectionTextData;
     }
 
-    /**d
+    /**
      * Swaps slides based on user operation
      * @param {Number} index - the index to display
      * @param {Object} slides - the slides in the reference section
@@ -204,6 +205,7 @@
         refContentsFragment.insertContent(data);
         // Place cursor after the inserted reference node
         origFragment.collapseToEnd().select();
+        
     }
 
     /**
@@ -247,9 +249,23 @@
         return template;
     }
 	
+	/**
+	 * Sends post request to scribe server with stats data
+	 **/
+
+	function sendStatsData( statsData ){
+		$.post({
+	        url: 'http://localhost:5000/api/v1/stats',
+	        data: JSON.stringify( statsData ),
+	        contentType: 'application/json'
+		}).done(function(response) {
+		
+		}).fail( function( error ) {})		
+	}
+
     function activateAddReferenceOnclickListerner(referenceAddButton, refDataNode, slides) {
         referenceAddButton.on('click', function () {
-            var selectRefData = [], selectedUrl,
+            var selectRefData = [], selectedUrl, statsData = {},
                 surfaceModel = ve.init.target.getSurface().getModel();
 
             $('.ve-scribe-reference-slider-slides')['0'].childNodes.forEach(function (node) {
@@ -262,17 +278,20 @@
             // we build template for select link to cite on VE Surface
             templateData = builRefTemplate(selectRefData, selectedUrl);
             insertReference(surfaceModel, templateData);
-            insertContent(surfaceModel, ' ');
-            slides = $('.ve-scribe-reference-slider-slides')['0'].childNodes
+            slides = $('.ve-scribe-reference-slider-slides')['0'].childNodes;
             slides.forEach( function( slide ) {
             	if( slide.style.display === 'block'){
-            		slide.className = slide.className + ' used-ref'
+            		slide.className = slide.className + ' used-ref';
+            		$('#ve-scribe-choose-ref')['0'].innerHTML = 'ADD AGAIN';
             	}	
             } );
+            
             // we send stats to the server side
-            // references_used and sections_used
-            // HINT -  references_used == selectedUrl
-            //         sections_used == 'class = active-seection'
+            // references_used and section under edit
+            statsData.article = mw.config.get('wgTitle');
+            statsData.ref = selectedUrl;
+            statsData.selectedSection = selectedSection.join( "" );
+            sendStatsData( statsData )
         });
     }
 
