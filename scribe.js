@@ -254,13 +254,16 @@
 	 **/
 
 	function sendStatsData( statsData ){
+		console.log('sending post request with', statsData);
 		$.post({
-	        url: 'http://localhost:5000/api/v1/stats',
-	        data: JSON.stringify( statsData ),
-	        contentType: 'application/json'
-		}).done(function(response) {
+        url: 'http://localhost:5000/api/v1/stats',
+        data: JSON.stringify( statsData ),
+        contentType: 'application/json'
+		    }).done(function(response) {
 		
-		}).fail( function( error ) {})		
+		    }).fail( function( error ) {
+		        console.log("Error encountered", error)
+		    })		
 	}
 
     function activateAddReferenceOnclickListerner(referenceAddButton, refDataNode, slides) {
@@ -316,13 +319,13 @@
         // $.get('https://tools.wmflabs.org/scribe/api/v1/references?section=' + mw.config.get( 'wgTitle' ).toLowerCase())
         $.get('https://tools.wmflabs.org/scribe/api/v1/references?section=' + sectionName + '&article=' + mw.config.get('wgTitle'))
             .then(function (response) {
-                var resource = response.resources;
+                var resource = response.resources,
+                	article_name = response.article_name;
                 resource.forEach(function (item) {
                     // append the data to the slider display items
-
                     var sliderText = createElement('div', '', 've-scribe-slider-text', ''),
                         refBox = createElement('div', '', 've-scribe-ref-box', ''),
-                        refTitle = createElement('span', '', 've-scribe-ref-title', item.publication_title),
+                        refTitle = createElement('span', '', 've-scribe-ref-title', article_name),
                         refText = createElement('p', '', 've-scribe-ref-text', item.content),
                         refUrl = createElement('a', '', 've-scribe-ref-link', item.url),
                         refData = createElement('p', 've-scribe-ref-data', '', '');
