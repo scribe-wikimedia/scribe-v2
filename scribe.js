@@ -18,7 +18,18 @@
             
         } );
     }
+/*  _____________________________________________________________________________
+* |                                                                             |
+* |                    === WARNING: GLOBAL GADGET FILE ===                      |
+* |                  Changes to this page affect many users.                    |
+* | Please discuss changes on the talk page or on [[WT:Gadget]] before editing. |
+* |_____________________________________________________________________________|
+* 
+* Imported from version 0.0.1 as of 2019-11-04 from [[:en:MediaWiki:Gadget-scribe.js]]
+* Using this script allows you to edit articles in underrepresented wikipedias, see [[User:Eugene233/scribe]]
+*/
 
+/* global mw, ve */
     var chosenReferences = [],
     	scribe = {},
     	sectionUrlTemplateData = [],
