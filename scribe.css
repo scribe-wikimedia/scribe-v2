@@ -1,14 +1,3 @@
-/*  _____________________________________________________________________________
- * |                                                                             |
- * |                    === WARNING: GLOBAL GADGET FILE ===                      |
- * |                  Changes to this page affect many users.                    |
- * | Please discuss changes on the talk page or on [[WT:Gadget]] before editing. |
- * |_____________________________________________________________________________|
- * 
- * Imported from version 0.0.1 as of 2019-11-04 from [[:en:MediaWiki:Gadget-scribe.js]]
- * Using this script allows you to edit articles in underrepresented wikipedias, see [[User:Eugene233/scribe]]
- */
-
 .ve-scribe-ref-box {
 	height: 70px;
 	background-color: white;
@@ -110,6 +99,7 @@
 	border-radius: 0 3px 3px 0;
 	user-select: none;
 	z-index: 1;
+	margin-left: inherit;
 }
 
 .prev:hover, .next:hover {
